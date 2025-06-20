@@ -21,11 +21,8 @@ const App = () => {
     const [lockedItemsByOutfit, setLockedItemsByOutfit] = useState({});
     
     // --- New Settings State ---
-    const [userName, setUserName] = useState(() => localStorage.getItem('userName') || '');
-    const [userLocation, setUserLocation] = useState(() => {
-        const saved = localStorage.getItem('userLocation');
-        return saved ? JSON.parse(saved) : { city: '', state: '' };
-    });
+    const [userName, setUserName] = useState('');
+    const [userLocation, setUserLocation] = useState({ city: '', state: '' });
     const [isSettingsVisible, setIsSettingsVisible] = useState(false);
     const [includeAccessories, setIncludeAccessories] = useState(true);
 
@@ -37,14 +34,6 @@ const App = () => {
     useEffect(() => {
         localStorage.setItem('wardrobe', JSON.stringify(clothing));
     }, [clothing]);
-
-    useEffect(() => {
-        localStorage.setItem('userName', userName);
-    }, [userName]);
-
-    useEffect(() => {
-        localStorage.setItem('userLocation', JSON.stringify(userLocation));
-    }, [userLocation]);
 
     useEffect(() => {
         setClothing([]);
@@ -66,7 +55,16 @@ const App = () => {
                     if (result.temp && result.description) {
                         setWeather({ temp: result.temp, description: result.description });
                     } else {
-                        setWeather({ temp: '', description: `Gemini: ${JSON.stringify(result)}` });
+                        // Try to parse a natural language response
+                        let tempMatch = null, descMatch = null;
+                        if (typeof result === 'string') {
+                            tempMatch = result.match(/([0-9]{2,3}) ?°?F/);
+                            descMatch = result.match(/(?:is|with|:|\.|,|\s)([a-zA-Z ]+)(?:\.|$)/);
+                        }
+                        setWeather({
+                            temp: tempMatch ? tempMatch[1] : '',
+                            description: descMatch ? descMatch[1].trim() : (typeof result === 'string' ? result : JSON.stringify(result))
+                        });
                     }
                 } catch (err) {
                     setWeather({ temp: '', description: 'Could not fetch weather from Gemini.' });
@@ -80,12 +78,6 @@ const App = () => {
         fetchWeather();
 
     }, [userLocation]);
-
-    useEffect(() => {
-        if (activeScreen === 'recommendation') {
-            fetchWeather();
-        }
-    }, [activeScreen]);
 
     const handleSelectItem = (itemId) => {
         setPreselectedItems(prev => prev.includes(itemId) ? prev.filter(id => id !== itemId) : [...prev, itemId]);
