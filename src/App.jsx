@@ -21,8 +21,11 @@ const App = () => {
     const [lockedItemsByOutfit, setLockedItemsByOutfit] = useState({});
     
     // --- New Settings State ---
-    const [userName, setUserName] = useState('');
-    const [userLocation, setUserLocation] = useState({ city: '', state: '' });
+    const [userName, setUserName] = useState(() => localStorage.getItem('userName') || '');
+    const [userLocation, setUserLocation] = useState(() => {
+        const saved = localStorage.getItem('userLocation');
+        return saved ? JSON.parse(saved) : { city: '', state: '' };
+    });
     const [isSettingsVisible, setIsSettingsVisible] = useState(false);
     const [includeAccessories, setIncludeAccessories] = useState(true);
 
@@ -34,6 +37,14 @@ const App = () => {
     useEffect(() => {
         localStorage.setItem('wardrobe', JSON.stringify(clothing));
     }, [clothing]);
+
+    useEffect(() => {
+        localStorage.setItem('userName', userName);
+    }, [userName]);
+
+    useEffect(() => {
+        localStorage.setItem('userLocation', JSON.stringify(userLocation));
+    }, [userLocation]);
 
     useEffect(() => {
         setClothing([]);
@@ -69,6 +80,12 @@ const App = () => {
         fetchWeather();
 
     }, [userLocation]);
+
+    useEffect(() => {
+        if (activeScreen === 'recommendation') {
+            fetchWeather();
+        }
+    }, [activeScreen]);
 
     const handleSelectItem = (itemId) => {
         setPreselectedItems(prev => prev.includes(itemId) ? prev.filter(id => id !== itemId) : [...prev, itemId]);
