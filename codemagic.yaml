@@ -1,0 +1,26 @@
+workflows:
+  ios-capacitor:
+    name: iOS Capacitor Build
+    environment:
+      vars:
+        APPLE_ID: ${{ secrets.APPLE_ID }}
+        APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
+      xcode: latest
+      node: 18.16.0
+    scripts:
+      - name: Install dependencies
+        script: |
+          npm install
+      - name: Build web app
+        script: |
+          npm run build
+      - name: Copy web build to iOS
+        script: |
+          npx cap sync ios
+      - name: Build IPA
+        script: |
+          cd ios
+          xcodebuild -workspace App.xcworkspace -scheme App -configuration Release -archivePath $CM_BUILD_DIR/App.xcarchive archive
+          xcodebuild -exportArchive -archivePath $CM_BUILD_DIR/App.xcarchive -exportOptionsPlist ExportOptions.plist -exportPath $CM_BUILD_DIR/build
+    artifacts:
+      - ios/build/*.ipa 
