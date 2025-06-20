@@ -29,7 +29,7 @@ const App = () => {
     const WEATHER_API_KEY = import.meta.env.VITE_OPENWEATHERMAP_API_KEY;
 
     useEffect(() => {
-        setClothing([ { id: '1', name: 'Blue Denim Jeans', imageUrl: 'https://placehold.co/400x400/3498db/ffffff?text=Jeans' }, { id: '2', name: 'White T-Shirt', imageUrl: 'https://placehold.co/400x400/ecf0f1/333333?text=T-Shirt' }, { id: '3', name: 'Leather Jacket', imageUrl: 'https://placehold.co/400x400/2c3e50/ffffff?text=Jacket' }, { id: '4', name: 'Sneakers', imageUrl: 'https://placehold.co/400x400/95a5a6/ffffff?text=Shoes' }, { id: '5', name: 'Sun Hat', imageUrl: 'https://placehold.co/400x400/f1c40f/333333?text=Hat' }, { id: '6', name: 'Floral Dress', imageUrl: 'https://placehold.co/400x400/e74c3c/ffffff?text=Dress' }, ]);
+        setClothing([]);
         
         const fetchWeather = async () => {
             if (userLocation.city && WEATHER_API_KEY) {
