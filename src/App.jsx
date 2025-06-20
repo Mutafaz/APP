@@ -10,7 +10,10 @@ import RecommendationScreen from './components/RecommendationScreen';
 const App = () => {
     const [activeScreen, setActiveScreen] = useState('wardrobe');
     const [weather, setWeather] = useState(null);
-    const [clothing, setClothing] = useState([]);
+    const [clothing, setClothing] = useState(() => {
+        const saved = localStorage.getItem('wardrobe');
+        return saved ? JSON.parse(saved) : [];
+    });
     const [recommendations, setRecommendations] = useState([]); 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -27,6 +30,10 @@ const App = () => {
     const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
     const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
     const WEATHER_API_KEY = import.meta.env.VITE_OPENWEATHERMAP_API_KEY;
+
+    useEffect(() => {
+        localStorage.setItem('wardrobe', JSON.stringify(clothing));
+    }, [clothing]);
 
     useEffect(() => {
         setClothing([]);
