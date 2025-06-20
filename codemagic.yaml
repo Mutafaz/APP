@@ -46,4 +46,5 @@ workflows:
           xcodebuild -workspace App/App.xcworkspace -scheme App -configuration Release -archivePath $CM_BUILD_DIR/App.xcarchive archive
           xcodebuild -exportArchive -archivePath $CM_BUILD_DIR/App.xcarchive -exportOptionsPlist ExportOptions.plist -exportPath $CM_BUILD_DIR/build
     artifacts:
-      - ios/build/*.ipa 
+      - ios/build/*.ipa
+      - /tmp/xcodebuild_logs/*.log 
