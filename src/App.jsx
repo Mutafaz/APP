@@ -47,10 +47,20 @@ const App = () => {
                         setWeather({ temp: data.main.temp, description: data.weather[0].description });
                     }
                 } catch (err) { console.error("Failed to fetch weather", err); }
+            } else if (userLocation.city && API_KEY) {
+                // Use Gemini to get the weather
+                try {
+                    const prompt = `What is the weather today in ${userLocation.city}, ${userLocation.state}? Please answer in the format: {\"temp\": <temperature in F>, \"description\": <short description>}`;
+                    const result = await callGeminiAPI(prompt);
+                    if (result.temp && result.description) {
+                        setWeather({ temp: result.temp, description: result.description });
+                    } else {
+                        setWeather({ temp: '', description: `Gemini: ${JSON.stringify(result)}` });
+                    }
+                } catch (err) {
+                    setWeather({ temp: '', description: 'Could not fetch weather from Gemini.' });
+                }
             } else if (userLocation.city) {
-                // FIX: This provides mock weather data when a location is set but no valid API key is present.
-                // This resolves the user-facing bug of the UI not updating.
-                console.log("Using mock weather data because no valid API key was provided.");
                 setWeather({ temp: 72, description: `pleasant in ${userLocation.city}` });
             } else {
                  setWeather(null);
