@@ -122,9 +122,21 @@ const App = () => {
         setUserLocation(location);
     };
     
+    const handleAddItem = (item) => {
+        setClothing(prev => [
+            ...prev,
+            {
+                id: Date.now().toString(),
+                name: item.name,
+                category: item.category,
+                imageUrl: item.image?.uri || '',
+            }
+        ]);
+    };
+    
     const renderScreen = () => {
         switch (activeScreen) {
-            case 'add': return <AddItemScreen onAddItem={(item) => alert(`Item ${item.name} would be added here.`)} loading={false}/>;
+            case 'add': return <AddItemScreen onAddItem={handleAddItem} loading={false}/>;
             case 'recommendation': return <RecommendationScreen clothing={clothing} onGetRecommendations={handleGetRecommendations} onRefineOutfit={handleRefineOutfit} weather={weather} recommendations={recommendations} loading={loading} error={error} lockedItemsByOutfit={lockedItemsByOutfit} onToggleLock={handleToggleLock} onSettingsClick={() => setIsSettingsVisible(true)} includeAccessories={includeAccessories} setIncludeAccessories={setIncludeAccessories} />;
             case 'wardrobe':
             default: return <WardrobeScreen clothing={clothing} selectedItems={preselectedItems} onSelectItem={handleSelectItem} userName={userName} onSettingsClick={() => setIsSettingsVisible(true)} />;
