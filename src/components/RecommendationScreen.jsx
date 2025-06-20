@@ -6,6 +6,10 @@ const RecommendationScreen = ({ clothing, onGetRecommendations, onRefineOutfit, 
     const [activity, setActivity] = useState('');
     const [ratings, setRatings] = useState({});
 
+    // Defensive: handle weather being null, undefined, or malformed
+    const temp = weather && typeof weather.temp !== 'undefined' && weather.temp !== '' ? Math.round(weather.temp) : null;
+    const description = weather && weather.description ? weather.description : '';
+
     return (
         <div className="flex-1 bg-gradient-to-b from-indigo-50 to-purple-50 overflow-y-auto p-5">
             <div className="flex justify-between items-center">
@@ -15,7 +19,16 @@ const RecommendationScreen = ({ clothing, onGetRecommendations, onRefineOutfit, 
                  </button>
             </div>
             <div className="space-y-6 mt-4">
-                {weather ? <div className="bg-white/70 backdrop-blur-sm p-4 rounded-xl text-center shadow-md"><p className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-blue-500">{Math.round(weather.temp)}°F</p><p className="text-md text-gray-600 capitalize">{weather.description}</p></div> : <div className="bg-white/70 p-4 rounded-xl text-center shadow-md"><p className="text-gray-500">Enter your location in Settings for weather.</p></div>}
+                {temp !== null ? (
+                  <div className="bg-white/70 backdrop-blur-sm p-4 rounded-xl text-center shadow-md">
+                    <p className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-blue-500">{temp}°F</p>
+                    <p className="text-md text-gray-600 capitalize">{description}</p>
+                  </div>
+                ) : (
+                  <div className="bg-white/70 p-4 rounded-xl text-center shadow-md">
+                    <p className="text-gray-500">Enter your location in Settings for weather.</p>
+                  </div>
+                )}
                 
                 <div className="flex justify-between items-center bg-white p-3 rounded-lg">
                     <label className="font-semibold text-gray-700">Include Accessories</label>
